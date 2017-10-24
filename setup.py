@@ -35,10 +35,10 @@ def setup():
     shutil.copyfile(src, dst)
 	"""
 
-    print("\nPrepare .pth file ... ")
+    print("\nPrepare .pth file ... \n")
     fileName = os.path.basename(os.path.normpath(os.path.dirname(os.path.abspath(__file__)))) + ".pth"
     fileFullName = os.path.join(site.getsitepackages()[1], fileName)
-    print("'%s' is created"%fileFullName)
+    print("... '%s' is created"%fileFullName)
     file = open(fileFullName, 'w')
     file.write(os.path.dirname(os.path.abspath(__file__)))
     file.close()
