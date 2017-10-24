@@ -6,14 +6,23 @@
 # Author:        Henry Wang
 # Created:       Aug 08, 2015
 #--------------------------------------------------------------------------------------
-import os, shutil, site, pip
+import sys, os, shutil, site, pip
 from setuptools.command import easy_install
 
 def setup():
-    print "\nSetup pyAutoTest '%s' ...\n"%(os.path.dirname(os.path.abspath(__file__)))
-    easy_install.main(['nose', 'nose-html', 'ddt', 'selenium', 'pywinauto', 'requests', 'pil'])
-    # there's issue install pyodbc using easy_install using pip instead
-    pip.main(['install', 'pyodbc'])
+
+    print("\nCheck python version ...")
+    if sys.version_info[0] < 3: 
+        raise Exception("PATS must be installed and used under Python 3.x")
+    
+    print("\nSetup PATS(Python Auto Test Suite) at '%s' ...\n"%(os.path.dirname(os.path.abspath(__file__))))
+    #easy_install.main(['nose', 'nose-html', 'ddt', 'selenium', 'pywinauto', 'requests', 'pil'])
+    pip.main(['install', 'unittest-xml-reporting'])    # https://github.com/xmlrunner/unittest-xml-reporting
+    print("")
+    pip.main(['install', 'html-testRunner'])    # https://github.com/oldani/HtmlTestRunner
+    print("")
+    pip.main(['install', 'ddt'])    # http://ddt.readthedocs.org/
+    
 
     """
 	print "\nModify ddt module ...\n"
@@ -26,10 +35,10 @@ def setup():
     shutil.copyfile(src, dst)
 	"""
 
-    print "\nPrepare .pth file ...\n"
+    print("\nPrepare .pth file ... ")
     fileName = os.path.basename(os.path.normpath(os.path.dirname(os.path.abspath(__file__)))) + ".pth"
     fileFullName = os.path.join(site.getsitepackages()[1], fileName)
-    print "create %s"%fileFullName
+    print("'%s' is created"%fileFullName)
     file = open(fileFullName, 'w')
     file.write(os.path.dirname(os.path.abspath(__file__)))
     file.close()
