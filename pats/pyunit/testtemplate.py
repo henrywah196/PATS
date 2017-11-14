@@ -15,6 +15,7 @@ class TestSuiteTemplate(unittest.TestSuite):
                 testRunner = xmlrunner.XMLTestRunner(verbosity=verbosity, output=output)
                 result = testRunner.run(self)
         elif outputtype == "html":
+            from pats.pyunit import HTMLTestRunner
             with open(output, 'wb') as output:
                 testRunner = HTMLTestRunner.HTMLTestRunner(stream=output, verbosity=verbosity, title=title, description=description)
                 result = testRunner.run(self)
@@ -26,25 +27,6 @@ class TestSuiteTemplate(unittest.TestSuite):
 
 
 class TestCaseTemplate(unittest.TestCase):
-    '''       
-    def doCleanups(self):
-        """override the original TestCase.doCleanups() not add error to result for verifyErrors()"""
-        result = self._resultForDoCleanups
-        ok = True
-        while self._cleanups:
-            function, args, kwargs = self._cleanups.pop(-1)
-            try:
-                function(*args, **kwargs)
-            except KeyboardInterrupt:
-                raise
-            except:
-                ok = False
-                if function == self._verifyErrors:
-                    result.addFailure(self, sys.exc_info())
-                else:
-                    result.addError(self, sys.exc_info())
-        return ok
-    '''
     
     @classmethod
     def suite(cls):
@@ -52,7 +34,7 @@ class TestCaseTemplate(unittest.TestCase):
         suite.addTest(unittest.makeSuite(cls))
         return suite
     
-        
+    
     @classmethod
     def execute(cls, verbosity=2):
         unittest.main(verbosity=verbosity)

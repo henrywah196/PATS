@@ -71,6 +71,14 @@ __version__ = "0.8.2"
 """
 Change History
 
+2016-03-29
+* update to not allow description escape special string
+  and support multiple lines.
+
+2016-03-23
+* update to make it support python 3.x
+* update to resolve a format issue on <pre> tags
+
 Version 0.8.2
 * Show output inline instead of popup window (Viorel Lupu).
 
@@ -91,7 +99,10 @@ Version in 0.7.1
 # TODO: simplify javascript using ,ore than 1 class in the class attribute?
 
 import datetime
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
 import sys
 import time
 import unittest
@@ -175,6 +186,9 @@ class Template_mixin(object):
     0: 'pass',
     1: 'fail',
     2: 'error',
+    3: 'skip',
+    4: 'efail',
+    5: 'upass'
     }
 
     DEFAULT_TITLE = 'Unit Test Report'
@@ -352,6 +366,9 @@ a.popup_link:hover {
     width: 500px;
 }
 
+.result_detail {
+    width: 500px;
+    overflow: auto;
 }
 /* -- report ------------------------------------------------------------------------ */
 #show_detail_line {
@@ -376,9 +393,13 @@ a.popup_link:hover {
 .passClass  { background-color: #6c6; }
 .failClass  { background-color: #c60; }
 .errorClass { background-color: #c00; }
+.upassClass { background-color:  #338bff; }
+.efailClass { background-color:   #ff33e9; }
 .passCase   { color: #6c6; }
 .failCase   { color: #c60; font-weight: bold; }
 .errorCase  { color: #c00; font-weight: bold; }
+.upassCase  { color:  #338bff; font-weight: bold; }
+.efailCase  { color:  #ff33e9; font-weight: bold; }
 .hiddenRow  { display: none; }
 .testcase   { margin-left: 2em; }
 
@@ -427,22 +448,34 @@ a.popup_link:hover {
 <col align='right' />
 <col align='right' />
 <col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
 </colgroup>
 <tr id='header_row'>
     <td>Test Group/Test case</td>
+    <td>Time</td>
     <td>Count</td>
     <td>Pass</td>
     <td>Fail</td>
     <td>Error</td>
+    <td>Skip</td>
+    <td>EFail</td>
+    <td>UPass</td>
     <td>View</td>
 </tr>
 %(test_list)s
 <tr id='total_row'>
     <td>Total</td>
+    <td>%(time)s</td>
     <td>%(count)s</td>
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
     <td>%(error)s</td>
+    <td>%(skip)s</td>
+    <td>%(efail)s</td>
+    <td>%(upass)s</td>
     <td>&nbsp;</td>
 </tr>
 </table>
@@ -451,10 +484,14 @@ a.popup_link:hover {
     REPORT_CLASS_TMPL = r"""
 <tr class='%(style)s'>
     <td>%(desc)s</td>
+    <td>%(time)s</td>
     <td>%(count)s</td>
     <td>%(Pass)s</td>
     <td>%(fail)s</td>
     <td>%(error)s</td>
+    <td>%(skip)s</td>
+    <td>%(efail)s</td>
+    <td>%(upass)s</td>
     <td><a href="javascript:showClassDetail('%(cid)s',%(count)s)">Detail</a></td>
 </tr>
 """ # variables: (style, desc, count, Pass, fail, error, cid)
@@ -463,7 +500,8 @@ a.popup_link:hover {
     REPORT_TEST_WITH_OUTPUT_TMPL = r"""
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
-    <td colspan='5' align='center'>
+    <td>%(time)s</td>
+    <td colspan='8' align='center'>
 
     <!--css div popup start-->
     <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_%(tid)s')" >
@@ -474,9 +512,9 @@ a.popup_link:hover {
         <a onfocus='this.blur();' onclick="document.getElementById('div_%(tid)s').style.display = 'none' " >
            [x]</a>
         </div>
-        <pre>
+        <div class="result_detail"><pre>
         %(script)s
-        </pre>
+        </pre></div>
     </div>
     <!--css div popup end-->
 
@@ -488,6 +526,7 @@ a.popup_link:hover {
     REPORT_TEST_NO_OUTPUT_TMPL = r"""
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
+    <td>%(time)s</td>
     <td colspan='5' align='center'>%(status)s</td>
 </tr>
 """ # variables: (tid, Class, style, desc, status)
@@ -510,6 +549,17 @@ a.popup_link:hover {
 
 TestResult = unittest.TestResult
 
+
+def formatTimeDelta(time):
+    # format time delta to a string like 00:00:00.000
+    s = time.total_seconds()
+    hours, remainder = divmod(s, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    seconds = round(seconds, 3)
+    return "%02d:%02d:%06.3f"%(hours, minutes, seconds)
+        
+
+
 class _TestResult(TestResult):
     # note: _TestResult is a pure representation of results.
     # It lacks the output and reporting ability compares to unittest._TextTestResult.
@@ -521,6 +571,9 @@ class _TestResult(TestResult):
         self.success_count = 0
         self.failure_count = 0
         self.error_count = 0
+        self.skip_count = 0
+        self.exp_failure_count = 0
+        self.unexp_success_count = 0
         self.verbosity = verbosity
 
         # result is a list of result in 4 tuple
@@ -531,12 +584,23 @@ class _TestResult(TestResult):
         #   stack trace,
         # )
         self.result = []
+        
+        
+    def testTime(self, test):
+        if hasattr(test, 'testStartTime'):
+            result = datetime.datetime.now() - test.testStartTime
+            test.testStartTime = datetime.datetime.now()
+            return result
+        else:
+            return datetime.timedelta()
 
 
     def startTest(self, test):
+        test.testStartTime = datetime.datetime.now()
         TestResult.startTest(self, test)
         # just one buffer for both stdout and stderr
-        self.outputBuffer = StringIO.StringIO()
+        #self.outputBuffer = StringIO.StringIO()
+        self.outputBuffer = StringIO()
         stdout_redirector.fp = self.outputBuffer
         stderr_redirector.fp = self.outputBuffer
         self.stdout0 = sys.stdout
@@ -569,39 +633,95 @@ class _TestResult(TestResult):
         self.success_count += 1
         TestResult.addSuccess(self, test)
         output = self.complete_output()
-        self.result.append((0, test, output, ''))
+        time = self.testTime(test)
+        self.result.append((0, test, output, '', time))
         if self.verbosity > 1:
-            sys.stderr.write('ok ')
+            sys.stderr.write('OK ')
             sys.stderr.write(str(test))
+            sys.stderr.write("  %s"%str(time))
             sys.stderr.write('\n')
         else:
             sys.stderr.write('.')
+            
+    def addFailure(self, test, err):
+        self.failure_count += 1
+        TestResult.addFailure(self, test, err)
+        _, _exc_str = self.failures[-1]
+        output = self.complete_output()
+        time = self.testTime(test)
+        self.result.append((1, test, output, _exc_str, time))
+        if self.verbosity > 1:
+            sys.stderr.write('F  ')
+            sys.stderr.write(str(test))
+            sys.stderr.write("  %s"%str(time))
+            sys.stderr.write('\n')
+        else:
+            sys.stderr.write('F')
 
     def addError(self, test, err):
         self.error_count += 1
         TestResult.addError(self, test, err)
         _, _exc_str = self.errors[-1]
         output = self.complete_output()
-        self.result.append((2, test, output, _exc_str))
+        time = self.testTime(test)
+        self.result.append((2, test, output, _exc_str, time))
         if self.verbosity > 1:
             sys.stderr.write('E  ')
             sys.stderr.write(str(test))
+            sys.stderr.write("  %s"%str(time))
             sys.stderr.write('\n')
         else:
             sys.stderr.write('E')
-
-    def addFailure(self, test, err):
-        self.failure_count += 1
-        TestResult.addFailure(self, test, err)
-        _, _exc_str = self.failures[-1]
+            
+    def addSkip(self, test, reason):
+        """Called when a test is skipped."""
+        self.skip_count += 1
+        TestResult.addSkip(self, test, reason)
+        _, _exc_str = self.skipped[-1]
         output = self.complete_output()
-        self.result.append((1, test, output, _exc_str))
+        time = self.testTime(test)
+        self.result.append((3, test, output, _exc_str, time))
         if self.verbosity > 1:
-            sys.stderr.write('F  ')
+            sys.stderr.write('S  ')
             sys.stderr.write(str(test))
+            sys.stderr.write("  %s"%str(time))
             sys.stderr.write('\n')
         else:
-            sys.stderr.write('F')
+            sys.stderr.write('S')
+            
+    def addExpectedFailure(self, test, err):
+        """Called when an expected failure/error occurred."""
+        self.exp_failure_count += 1
+        TestResult.addExpectedFailure(self, test, err)
+        _, _exc_str = self.expectedFailures[-1]
+        output = self.complete_output()
+        time = self.testTime(test)
+        self.result.append((4, test, output, _exc_str, time))
+        if self.verbosity > 1:
+            sys.stderr.write('EF ')
+            sys.stderr.write(str(test))
+            sys.stderr.write("  %s"%str(time))
+            sys.stderr.write('\n')
+        else:
+            sys.stderr.write('EF')
+            
+    def addUnexpectedSuccess(self, test):
+        """Called when a test was expected to fail, but succeed."""
+        self.unexp_success_count += 1
+        TestResult.addUnexpectedSuccess(self, test)
+        #_, _exc_str = self.unexpectedSuccesses[-1]
+        output = self.complete_output()
+        time = self.testTime(test)
+        self.result.append((5, test, output, "***The test passed unexpectedly***", time))
+        if self.verbosity > 1:
+            sys.stderr.write('UP ')
+            sys.stderr.write(str(test))
+            sys.stderr.write("  %s"%str(time))
+            sys.stderr.write('\n')
+        else:
+            sys.stderr.write('UP')
+
+    
 
 
 class HTMLTestRunner(Template_mixin):
@@ -620,6 +740,7 @@ class HTMLTestRunner(Template_mixin):
             self.description = description
 
         self.startTime = datetime.datetime.now()
+        self.duration = None
 
 
     def run(self, test):
@@ -628,21 +749,23 @@ class HTMLTestRunner(Template_mixin):
         test(result)
         self.stopTime = datetime.datetime.now()
         self.generateReport(test, result)
-        print >>sys.stderr, '\nTime Elapsed: %s' % (self.stopTime-self.startTime)
+        #print >>sys.stderr, '\nTime Elapsed: %s' % (self.stopTime-self.startTime)
+        print ('\nTime Elapsed: %s' %self.duration, file=sys.stderr)
         return result
 
 
     def sortResult(self, result_list):
         # unittest does not seems to run in any particular order.
-        # Here at least we want to group them together by class.
+        # Here at least we want to group them together by class and
+        # then sort them by test name
         rmap = {}
         classes = []
-        for n,t,o,e in result_list:
+        for n,t,o,e, time in result_list:
             cls = t.__class__
-            if not rmap.has_key(cls):
+            if not cls in rmap:
                 rmap[cls] = []
                 classes.append(cls)
-            rmap[cls].append((n,t,o,e))
+            rmap[cls].append((n,t,o,e,time))
         r = [(cls, rmap[cls]) for cls in classes]
         return r
 
@@ -653,11 +776,15 @@ class HTMLTestRunner(Template_mixin):
         Override this to add custom attributes.
         """
         startTime = str(self.startTime)[:19]
-        duration = str(self.stopTime - self.startTime)
+        #duration = formatTimeDelta(self.stopTime - self.startTime)
+        duration = formatTimeDelta(self.duration)
         status = []
-        if result.success_count: status.append('Pass %s'    % result.success_count)
-        if result.failure_count: status.append('Failure %s' % result.failure_count)
-        if result.error_count:   status.append('Error %s'   % result.error_count  )
+        if result.success_count:     status.append('Pass %s'    % result.success_count)
+        if result.failure_count:     status.append('Failure %s' % result.failure_count)
+        if result.error_count:       status.append('Error %s'   % result.error_count  )
+        if result.skip_count:        status.append('Skipped %s' % result.skip_count)
+        if result.exp_failure_count: status.append('Expected Failure %s' % result.exp_failure_count)
+        if result.unexp_success_count: status.append('Unexpected Pass %s' % result.unexp_success_count)
         if status:
             status = ' '.join(status)
         else:
@@ -670,12 +797,14 @@ class HTMLTestRunner(Template_mixin):
 
 
     def generateReport(self, test, result):
-        report_attrs = self.getReportAttributes(result)
+        #report_attrs = self.getReportAttributes(result)
         generator = 'HTMLTestRunner %s' % __version__
         stylesheet = self._generate_stylesheet()
-        heading = self._generate_heading(report_attrs)
+        #heading = self._generate_heading(report_attrs)
         report = self._generate_report(result)
         ending = self._generate_ending()
+        report_attrs = self.getReportAttributes(result)
+        heading = self._generate_heading(report_attrs)
         output = self.HTML_TMPL % dict(
             title = saxutils.escape(self.title),
             generator = generator,
@@ -702,7 +831,8 @@ class HTMLTestRunner(Template_mixin):
         heading = self.HEADING_TMPL % dict(
             title = saxutils.escape(self.title),
             parameters = ''.join(a_lines),
-            description = saxutils.escape(self.description),
+            #description = saxutils.escape(self.description),
+            description = self.description,    # don't escape special string, I want multiple line in description
         )
         return heading
 
@@ -710,13 +840,20 @@ class HTMLTestRunner(Template_mixin):
     def _generate_report(self, result):
         rows = []
         sortedResult = self.sortResult(result.result)
+        total_time = datetime.timedelta(0)
         for cid, (cls, cls_results) in enumerate(sortedResult):
             # subtotal for a class
-            np = nf = ne = 0
-            for n,t,o,e in cls_results:
+            np = nf = ne = ns = nef = nup = 0
+            class_time = datetime.timedelta(0)
+            for n,t,o,e,time in cls_results:
+                class_time += time
+                total_time += time
                 if n == 0: np += 1
                 elif n == 1: nf += 1
-                else: ne += 1
+                elif n == 2: ne += 1
+                elif n == 3: ns += 1
+                elif n == 4: nef += 1
+                else: nup += 1 
 
             # format class description
             if cls.__module__ == "__main__":
@@ -727,30 +864,40 @@ class HTMLTestRunner(Template_mixin):
             desc = doc and '%s: %s' % (name, doc) or name
 
             row = self.REPORT_CLASS_TMPL % dict(
-                style = ne > 0 and 'errorClass' or nf > 0 and 'failClass' or 'passClass',
+                style = ne > 0 and 'errorClass' or nf > 0 and 'failClass' or nup > 0 and 'upassClass' or nef > 0 and 'efailClass' or 'passClass',
                 desc = desc,
-                count = np+nf+ne,
+                time = formatTimeDelta(class_time),
+                count = np+nf+ne+ns+nef,
                 Pass = np,
                 fail = nf,
                 error = ne,
+                skip = ns,
+                efail = nef,
+                upass = nup,
                 cid = 'c%s' % (cid+1),
             )
             rows.append(row)
 
-            for tid, (n,t,o,e) in enumerate(cls_results):
-                self._generate_report_test(rows, cid, tid, n, t, o, e)
+            for tid, (n,t,o,e,time) in enumerate(cls_results):
+                self._generate_report_test(rows, cid, tid, n, t, o, e, time)
+                
+        self.duration = total_time
 
         report = self.REPORT_TMPL % dict(
             test_list = ''.join(rows),
-            count = str(result.success_count+result.failure_count+result.error_count),
+            time = formatTimeDelta(total_time),
+            count = str(result.success_count+result.failure_count+result.error_count+result.skip_count+result.exp_failure_count+result.unexp_success_count),
             Pass = str(result.success_count),
             fail = str(result.failure_count),
             error = str(result.error_count),
+            skip = str(result.skip_count),
+            efail = str(result.exp_failure_count),
+            upass = str(result.unexp_success_count)
         )
         return report
 
 
-    def _generate_report_test(self, rows, cid, tid, n, t, o, e):
+    def _generate_report_test(self, rows, cid, tid, n, t, o, e, time):
         # e.g. 'pt1.1', 'ft1.1', etc
         has_output = bool(o or e)
         tid = (n == 0 and 'p' or 'f') + 't%s.%s' % (cid+1,tid+1)
@@ -763,13 +910,15 @@ class HTMLTestRunner(Template_mixin):
         if isinstance(o,str):
             # TODO: some problem with 'string_escape': it escape \n and mess up formating
             # uo = unicode(o.encode('string_escape'))
-            uo = o.decode('latin-1')
+            #uo = o.decode('latin-1')
+            uo = o
         else:
             uo = o
         if isinstance(e,str):
             # TODO: some problem with 'string_escape': it escape \n and mess up formating
             # ue = unicode(e.encode('string_escape'))
-            ue = e.decode('latin-1')
+            #ue = e.decode('latin-1')
+            ue = e
         else:
             ue = e
 
@@ -781,9 +930,10 @@ class HTMLTestRunner(Template_mixin):
         row = tmpl % dict(
             tid = tid,
             Class = (n == 0 and 'hiddenRow' or 'none'),
-            style = n == 2 and 'errorCase' or (n == 1 and 'failCase' or 'none'),
+            style = n == 2 and 'errorCase' or (n == 1 and 'failCase' or (n == 5 and 'upassCase' or (n == 4 and 'efailCase' or 'none'))),
             desc = desc,
             script = script,
+            time = formatTimeDelta(time),
             status = self.STATUS[n],
         )
         rows.append(row)
