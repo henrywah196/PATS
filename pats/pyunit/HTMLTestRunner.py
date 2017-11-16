@@ -207,7 +207,7 @@ class Template_mixin(object):
     %(stylesheet)s
 </head>
 <body>
-<script language="javascript" type="text/javascript"><!--
+<script language="javascript" type="text/javascript">
 output_list = Array();
 
 /* level - 0:Summary; 1:Failed; 2:All */
@@ -255,7 +255,9 @@ function showClassDetail(cid, count) {
     for (var i = 0; i < count; i++) {
         tid = id_list[i];
         if (toHide) {
-            document.getElementById('div_'+tid).style.display = 'none'
+            if (document.getElementById('div_'+tid) !== null) {
+                document.getElementById('div_'+tid).style.display = 'none'
+            }
             document.getElementById(tid).className = 'hiddenRow';
         }
         else {
@@ -300,7 +302,7 @@ function showOutput(id, name) {
     d.close();
 }
 */
---></script>
+</script>
 
 %(heading)s
 %(report)s
@@ -391,11 +393,13 @@ a.popup_link:hover {
 }
 #total_row  { font-weight: bold; }
 .passClass  { background-color: #6c6; }
+.skipClass  { background-color: #6c6; }
 .failClass  { background-color: #c60; }
 .errorClass { background-color: #c00; }
 .upassClass { background-color:  #338bff; }
 .efailClass { background-color:   #ff33e9; }
 .passCase   { color: #6c6; }
+.skipCase   { color: #6c6; }
 .failCase   { color: #c60; font-weight: bold; }
 .errorCase  { color: #c00; font-weight: bold; }
 .upassCase  { color:  #338bff; font-weight: bold; }
@@ -906,7 +910,7 @@ class HTMLTestRunner(Template_mixin):
                 style = ne > 0 and 'errorClass' or nf > 0 and 'failClass' or nup > 0 and 'upassClass' or nef > 0 and 'efailClass' or 'passClass',
                 desc = desc,
                 time = formatTimeDelta(class_time),
-                count = np+nf+ne+ns+nef,
+                count = np+nf+ne+ns+nef+nup,
                 Pass = np,
                 fail = nf,
                 error = ne,
