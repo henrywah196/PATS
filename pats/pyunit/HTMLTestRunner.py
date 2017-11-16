@@ -527,7 +527,7 @@ a.popup_link:hover {
 <tr id='%(tid)s' class='%(Class)s'>
     <td class='%(style)s'><div class='testcase'>%(desc)s</div></td>
     <td>%(time)s</td>
-    <td colspan='5' align='center'>%(status)s</td>
+    <td colspan='8' align='center'>%(status)s</td>
 </tr>
 """ # variables: (tid, Class, style, desc, status)
 
@@ -720,6 +720,43 @@ class _TestResult(TestResult):
             sys.stderr.write('\n')
         else:
             sys.stderr.write('UP')
+            
+    def addSubTest(self, test, subtest, err):
+        """Called at the end of a subtest.
+        'err' is None if the subtest ended successfully, otherwise it's a
+        tuple of values as returned by sys.exc_info().
+        """
+        TestResult.addSubTest(self, test, subtest, err)
+        output = self.complete_output()
+        time = self.testTime(test)
+        flag = 'OK'
+        if err is not None:
+            if issubclass(err[0], test.failureException):
+                # log as failure
+                self.failure_count += 1
+                _, _exc_str = self.failures[-1]
+                self.result.append((1, subtest, output, _exc_str, time))
+                flag = 'F'
+            else:
+                #log as error
+                self.error_count += 1
+                _, _exc_str = self.errors[-1]
+                self.result.append((2, subtest, output, _exc_str, time))
+                flag = 'E'
+        else:
+            # log as pass
+            self.success_count += 1
+            self.result.append((0, subtest, output, '', time))
+        if self.verbosity > 1:
+            if flag == 'OK':
+                sys.stderr.write('{0} '.format(flag))
+            else:
+                sys.stderr.write('{0}  '.format(flag))
+            sys.stderr.write(str(subtest))
+            sys.stderr.write("  %s"%str(time))
+            sys.stderr.write('\n')
+        else:
+            sys.stderr.write('{0}'.format(flag))
 
     
 
@@ -762,6 +799,8 @@ class HTMLTestRunner(Template_mixin):
         classes = []
         for n,t,o,e, time in result_list:
             cls = t.__class__
+            if hasattr(t, 'test_case'):
+                cls = t.test_case.__class__
             if not cls in rmap:
                 rmap[cls] = []
                 classes.append(cls)
