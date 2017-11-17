@@ -1,0 +1,1565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Test Report Title</title>
+    <meta name="generator" content="HTMLTestRunner 0.8.2"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    
+<style type="text/css" media="screen">
+body        { font-family: verdana, arial, helvetica, sans-serif; font-size: 80%; }
+table       { font-size: 100%; }
+pre         { }
+
+/* -- heading ---------------------------------------------------------------------- */
+h1 {
+	font-size: 16pt;
+	color: gray;
+}
+.heading {
+    margin-top: 0ex;
+    margin-bottom: 1ex;
+}
+
+.heading .attribute {
+    margin-top: 1ex;
+    margin-bottom: 0;
+}
+
+.heading .description {
+    margin-top: 4ex;
+    margin-bottom: 6ex;
+}
+
+/* -- css div popup ------------------------------------------------------------------------ */
+a.popup_link {
+}
+
+a.popup_link:hover {
+    color: red;
+}
+
+.popup_window {
+    display: none;
+    position: relative;
+    left: 0px;
+    top: 0px;
+    /*border: solid #627173 1px; */
+    padding: 10px;
+    background-color: #E6E6D6;
+    font-family: "Lucida Console", "Courier New", Courier, monospace;
+    text-align: left;
+    font-size: 8pt;
+    width: 500px;
+}
+
+.result_detail {
+    width: 500px;
+    overflow: auto;
+}
+/* -- report ------------------------------------------------------------------------ */
+#show_detail_line {
+    margin-top: 3ex;
+    margin-bottom: 1ex;
+}
+#result_table {
+    width: 80%;
+    border-collapse: collapse;
+    border: 1px solid #777;
+}
+#header_row {
+    font-weight: bold;
+    color: white;
+    background-color: #777;
+}
+#result_table td {
+    border: 1px solid #777;
+    padding: 2px;
+}
+#total_row  { font-weight: bold; }
+.passClass  { background-color: #6c6; }
+.skipClass  { background-color: #6c6; }
+.failClass  { background-color: #c60; }
+.errorClass { background-color: #c00; }
+.upassClass { background-color:  #338bff; }
+.efailClass { background-color:   #ff33e9; }
+.passCase   { color: #6c6; }
+.skipCase   { color: #6c6; }
+.failCase   { color: #c60; font-weight: bold; }
+.errorCase  { color: #c00; font-weight: bold; }
+.upassCase  { color:  #338bff; font-weight: bold; }
+.efailCase  { color:  #ff33e9; font-weight: bold; }
+.hiddenRow  { display: none; }
+.testcase   { margin-left: 2em; }
+
+
+/* -- ending ---------------------------------------------------------------------- */
+#ending {
+}
+
+</style>
+
+</head>
+<body>
+<script language="javascript" type="text/javascript">
+output_list = Array();
+
+/* level - 0:Summary; 1:Failed; 2:All */
+function showCase(level) {
+    trs = document.getElementsByTagName("tr");
+    for (var i = 0; i < trs.length; i++) {
+        tr = trs[i];
+        id = tr.id;
+        if (id.substr(0,2) == 'ft') {
+            if (level < 1) {
+                tr.className = 'hiddenRow';
+            }
+            else {
+                tr.className = '';
+            }
+        }
+        if (id.substr(0,2) == 'pt') {
+            if (level > 1) {
+                tr.className = '';
+            }
+            else {
+                tr.className = 'hiddenRow';
+            }
+        }
+    }
+}
+
+
+function showClassDetail(cid, count) {
+    var id_list = Array(count);
+    var toHide = 1;
+    for (var i = 0; i < count; i++) {
+        tid0 = 't' + cid.substr(1) + '.' + (i+1);
+        tid = 'f' + tid0;
+        tr = document.getElementById(tid);
+        if (!tr) {
+            tid = 'p' + tid0;
+            tr = document.getElementById(tid);
+        }
+        id_list[i] = tid;
+        if (tr.className) {
+            toHide = 0;
+        }
+    }
+    for (var i = 0; i < count; i++) {
+        tid = id_list[i];
+        if (toHide) {
+            if (document.getElementById('div_'+tid) !== null) {
+                document.getElementById('div_'+tid).style.display = 'none'
+            }
+            document.getElementById(tid).className = 'hiddenRow';
+        }
+        else {
+            document.getElementById(tid).className = '';
+        }
+    }
+}
+
+
+function showTestDetail(div_id){
+    var details_div = document.getElementById(div_id)
+    var displayState = details_div.style.display
+    // alert(displayState)
+    if (displayState != 'block' ) {
+        displayState = 'block'
+        details_div.style.display = 'block'
+    }
+    else {
+        details_div.style.display = 'none'
+    }
+}
+
+
+function html_escape(s) {
+    s = s.replace(/&/g,'&amp;');
+    s = s.replace(/</g,'&lt;');
+    s = s.replace(/>/g,'&gt;');
+    return s;
+}
+
+/* obsoleted by detail in <div>
+function showOutput(id, name) {
+    var w = window.open("", //url
+                    name,
+                    "resizable,scrollbars,status,width=800,height=450");
+    d = w.document;
+    d.write("<pre>");
+    d.write(html_escape(output_list[id]));
+    d.write("\n");
+    d.write("<a href='javascript:window.close()'>close</a>\n");
+    d.write("</pre>\n");
+    d.close();
+}
+*/
+</script>
+
+<div class='heading'>
+<h1>Test Report Title</h1>
+<p class='attribute'><strong>Start Time:</strong> 2017-11-15 23:30:58</p>
+<p class='attribute'><strong>Duration:</strong> 00:00:00.181</p>
+<p class='attribute'><strong>Status:</strong> Pass 20 Failure 17 Error 3 Skipped 4 Expected Failure 1 Unexpected Pass 1</p>
+
+<p class='description'>Test Report Description</p>
+</div>
+
+
+
+<p id='show_detail_line'>Show
+<a href='javascript:showCase(0)'>Summary</a>
+<a href='javascript:showCase(1)'>Failed</a>
+<a href='javascript:showCase(2)'>All</a>
+</p>
+<table id='result_table'>
+<colgroup>
+<col align='left' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+<col align='right' />
+</colgroup>
+<tr id='header_row'>
+    <td>Test Group/Test case</td>
+    <td>Time</td>
+    <td>Count</td>
+    <td>Pass</td>
+    <td>Fail</td>
+    <td>Error</td>
+    <td>Skip</td>
+    <td>EFail</td>
+    <td>UPass</td>
+    <td>View</td>
+</tr>
+
+<tr class='passClass'>
+    <td>suite01.case0101.Case0101</td>
+    <td>00:00:00.000</td>
+    <td>3</td>
+    <td>3</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c1',3)">Detail</a></td>
+</tr>
+
+<tr id='pt1.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.1')" >
+        pass</a>
+
+    <div id='div_pt1.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt1.1: test setup for 'Case0101.test_01'
+execute test 'Case0101.test_01'
+test clean up for 'Case0101.test_01'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt1.2' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_02</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.2')" >
+        pass</a>
+
+    <div id='div_pt1.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt1.2: test setup for 'Case0101.test_02'
+execute test 'Case0101.test_02'
+test clean up for 'Case0101.test_02'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt1.3' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_03</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt1.3')" >
+        pass</a>
+
+    <div id='div_pt1.3' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt1.3').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt1.3: test setup for 'Case0101.test_03'
+execute test 'Case0101.test_03'
+test clean up for 'Case0101.test_03'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='passClass'>
+    <td>suite01.case0102.Case0102</td>
+    <td>00:00:00.000</td>
+    <td>3</td>
+    <td>3</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c2',3)">Detail</a></td>
+</tr>
+
+<tr id='pt2.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt2.1')" >
+        pass</a>
+
+    <div id='div_pt2.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt2.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt2.1: test setup for 'Case0102.test_01'
+execute test 'Case0102.test_01'
+test clean up for 'Case0102.test_01'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt2.2' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_02</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt2.2')" >
+        pass</a>
+
+    <div id='div_pt2.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt2.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt2.2: test setup for 'Case0102.test_02'
+execute test 'Case0102.test_02'
+test clean up for 'Case0102.test_02'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt2.3' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_03</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt2.3')" >
+        pass</a>
+
+    <div id='div_pt2.3' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt2.3').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt2.3: test setup for 'Case0102.test_03'
+execute test 'Case0102.test_03'
+test clean up for 'Case0102.test_03'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='passClass'>
+    <td>suite01.case0103.Case0103</td>
+    <td>00:00:00.001</td>
+    <td>3</td>
+    <td>3</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c3',3)">Detail</a></td>
+</tr>
+
+<tr id='pt3.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt3.1')" >
+        pass</a>
+
+    <div id='div_pt3.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt3.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt3.1: test setup for 'Case0103.test_01'
+execute test 'Case0103.test_01'
+test clean up for 'Case0103.test_01'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt3.2' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_02</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt3.2')" >
+        pass</a>
+
+    <div id='div_pt3.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt3.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt3.2: test setup for 'Case0103.test_02'
+execute test 'Case0103.test_02'
+test clean up for 'Case0103.test_02'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt3.3' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_03</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt3.3')" >
+        pass</a>
+
+    <div id='div_pt3.3' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt3.3').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt3.3: test setup for 'Case0103.test_03'
+execute test 'Case0103.test_03'
+test clean up for 'Case0103.test_03'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='passClass'>
+    <td>suite02.case0201.TestUM</td>
+    <td>00:00:00.000</td>
+    <td>2</td>
+    <td>2</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c4',2)">Detail</a></td>
+</tr>
+
+<tr id='pt4.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_numbers_3_4: verify 3 x 4 = 12</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt4.1')" >
+        pass</a>
+
+    <div id='div_pt4.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt4.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt4.1: test setup for 'TestUM.test_numbers_3_4'
+test clean up for 'TestUM.test_numbers_3_4'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt4.2' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_strings_a_3: verify a multiply 3 times</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_pt4.2')" >
+        pass</a>
+
+    <div id='div_pt4.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_pt4.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+pt4.2: test setup for 'TestUM.test_strings_a_3'
+test clean up for 'TestUM.test_strings_a_3'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='errorClass'>
+    <td>suite02.case0202.TestMarkdownPy</td>
+    <td>00:00:00.052</td>
+    <td>3</td>
+    <td>0</td>
+    <td>0</td>
+    <td>3</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c5',3)">Detail</a></td>
+</tr>
+
+<tr id='ft5.1' class='none'>
+    <td class='errorCase'><div class='testcase'>test_em: Lines surrounded by asterisks should be wrapped in 'em' tags</div></td>
+    <td>00:00:00.014</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft5.1')" >
+        error</a>
+
+    <div id='div_ft5.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft5.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft5.1: test setup for 'TestMarkdownPy.test_em'
+test clean up for 'TestMarkdownPy.test_em'
+Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite02\case0202.py", line 41, in test_em
+    result = run_markdown('*this should be wrapped in em tags*')
+  File "D:\eclipse_workspace\python\pyunit test project\aut\markdown_adapter.py", line 19, in run_markdown
+    return run_markdown_pipe(input_text)
+  File "D:\eclipse_workspace\python\pyunit test project\aut\markdown_adapter.py", line 27, in run_markdown_pipe
+    output = pipe.communicate(input=input_text)[0]
+  File "C:\Python36\lib\subprocess.py", line 843, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "C:\Python36\lib\subprocess.py", line 1086, in _communicate
+    self._stdin_write(input)
+  File "C:\Python36\lib\subprocess.py", line 781, in _stdin_write
+    self.stdin.write(input)
+TypeError: a bytes-like object is required, not 'str'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft5.2' class='none'>
+    <td class='errorCase'><div class='testcase'>test_non_marked_lines: Non-marked lines should only get 'p' tags around all input</div></td>
+    <td>00:00:00.015</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft5.2')" >
+        error</a>
+
+    <div id='div_ft5.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft5.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft5.2: test setup for 'TestMarkdownPy.test_non_marked_lines'
+test clean up for 'TestMarkdownPy.test_non_marked_lines'
+Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite02\case0202.py", line 35, in test_non_marked_lines
+    result = run_markdown('this line has no special handling')
+  File "D:\eclipse_workspace\python\pyunit test project\aut\markdown_adapter.py", line 19, in run_markdown
+    return run_markdown_pipe(input_text)
+  File "D:\eclipse_workspace\python\pyunit test project\aut\markdown_adapter.py", line 27, in run_markdown_pipe
+    output = pipe.communicate(input=input_text)[0]
+  File "C:\Python36\lib\subprocess.py", line 843, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "C:\Python36\lib\subprocess.py", line 1086, in _communicate
+    self._stdin_write(input)
+  File "C:\Python36\lib\subprocess.py", line 781, in _stdin_write
+    self.stdin.write(input)
+TypeError: a bytes-like object is required, not 'str'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft5.3' class='none'>
+    <td class='errorCase'><div class='testcase'>test_strong: Lines surrounded by double asterisks should be wrapped in 'strong' tags</div></td>
+    <td>00:00:00.023</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft5.3')" >
+        error</a>
+
+    <div id='div_ft5.3' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft5.3').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft5.3: test setup for 'TestMarkdownPy.test_strong'
+test clean up for 'TestMarkdownPy.test_strong'
+Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite02\case0202.py", line 47, in test_strong
+    result = run_markdown('**this should be wrapped in strong tags**')
+  File "D:\eclipse_workspace\python\pyunit test project\aut\markdown_adapter.py", line 19, in run_markdown
+    return run_markdown_pipe(input_text)
+  File "D:\eclipse_workspace\python\pyunit test project\aut\markdown_adapter.py", line 27, in run_markdown_pipe
+    output = pipe.communicate(input=input_text)[0]
+  File "C:\Python36\lib\subprocess.py", line 843, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "C:\Python36\lib\subprocess.py", line 1086, in _communicate
+    self._stdin_write(input)
+  File "C:\Python36\lib\subprocess.py", line 781, in _stdin_write
+    self.stdin.write(input)
+TypeError: a bytes-like object is required, not 'str'
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='upassClass'>
+    <td>suite03.case0301.Case0301</td>
+    <td>00:00:00.001</td>
+    <td>6</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>4</td>
+    <td>1</td>
+    <td>1</td>
+    <td><a href="javascript:showClassDetail('c6',6)">Detail</a></td>
+</tr>
+
+<tr id='ft6.1' class='none'>
+    <td class='none'><div class='testcase'>test_01_skip: demo unittest.skip()</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft6.1')" >
+        skip</a>
+
+    <div id='div_ft6.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft6.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft6.1: demonstrating skipping
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft6.2' class='none'>
+    <td class='none'><div class='testcase'>test_02_skipIf: demo unittest.skipIf()</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft6.2')" >
+        skip</a>
+
+    <div id='div_ft6.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft6.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft6.2: not yet implemented
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft6.3' class='none'>
+    <td class='none'><div class='testcase'>test_03_skipUnless: demo unittest.skipUnless()</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft6.3')" >
+        skip</a>
+
+    <div id='div_ft6.3' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft6.3').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft6.3: Only test under linux
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft6.4' class='none'>
+    <td class='none'><div class='testcase'>test_04: demo self.skipTest()</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft6.4')" >
+        skip</a>
+
+    <div id='div_ft6.4' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft6.4').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft6.4: test condition for 'test_04' is not ready yet
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft6.5' class='none'>
+    <td class='upassCase'><div class='testcase'>test_05_expectedFailure_01: demo unexpected success</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft6.5')" >
+        upass</a>
+
+    <div id='div_ft6.5' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft6.5').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft6.5: test clean up for 'Case0301.test_05_expectedFailure_01'
+***The test passed unexpectedly***
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft6.6' class='none'>
+    <td class='efailCase'><div class='testcase'>test_05_expectedFailure_02: demo unittest.expectedFailure</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft6.6')" >
+        efail</a>
+
+    <div id='div_ft6.6' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft6.6').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft6.6: test clean up for 'Case0301.test_05_expectedFailure_02'
+Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0301.py", line 75, in test_05_expectedFailure_02
+    self.assertTrue(result, "result is expected")
+AssertionError: False is not true : result is expected
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='failClass'>
+    <td>suite03.case0302.Case0302</td>
+    <td>00:00:00.005</td>
+    <td>14</td>
+    <td>6</td>
+    <td>8</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c7',14)">Detail</a></td>
+</tr>
+
+<tr id='pt7.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01_even (param=0)</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft7.2' class='none'>
+    <td class='failCase'><div class='testcase'>test_01_even (param=1)</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.2')" >
+        fail</a>
+
+    <div id='div_ft7.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.2: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 39, in test_01_even
+    self.assertEqual(param % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt7.3' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01_even (param=2)</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft7.4' class='none'>
+    <td class='failCase'><div class='testcase'>test_01_even (param=3)</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.4')" >
+        fail</a>
+
+    <div id='div_ft7.4' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.4').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.4: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 39, in test_01_even
+    self.assertEqual(param % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt7.5' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01_even (param=4)</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft7.6' class='none'>
+    <td class='failCase'><div class='testcase'>test_01_even (param=5)</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.6')" >
+        fail</a>
+
+    <div id='div_ft7.6' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.6').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.6: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 39, in test_01_even
+    self.assertEqual(param % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft7.7' class='none'>
+    <td class='failCase'><div class='testcase'>test_02_subTest [verify assert equal]</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.7')" >
+        fail</a>
+
+    <div id='div_ft7.7' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.7').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.7: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 47, in test_02_subTest
+    self.assertEqual(current, expected, "current is not expected")
+AssertionError: 2 != 1 : current is not expected
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft7.8' class='none'>
+    <td class='failCase'><div class='testcase'>test_02_subTest [verify is True]</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.8')" >
+        fail</a>
+
+    <div id='div_ft7.8' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.8').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.8: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 51, in test_02_subTest
+    self.assertTrue(result, "result is not expected")
+AssertionError: False is not true : result is not expected
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt7.9' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_02_subTest [verify if number is even: 0]</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft7.10' class='none'>
+    <td class='failCase'><div class='testcase'>test_02_subTest [verify if number is even: 1]</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.10')" >
+        fail</a>
+
+    <div id='div_ft7.10' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.10').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.10: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 56, in test_02_subTest
+    self.assertEqual(i % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt7.11' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_02_subTest [verify if number is even: 2]</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft7.12' class='none'>
+    <td class='failCase'><div class='testcase'>test_02_subTest [verify if number is even: 3]</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.12')" >
+        fail</a>
+
+    <div id='div_ft7.12' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.12').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.12: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 56, in test_02_subTest
+    self.assertEqual(i % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt7.13' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_02_subTest [verify if number is even: 4]</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft7.14' class='none'>
+    <td class='failCase'><div class='testcase'>test_02_subTest [verify if number is even: 5]</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft7.14')" >
+        fail</a>
+
+    <div id='div_ft7.14' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft7.14').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft7.14: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0302.py", line 56, in test_02_subTest
+    self.assertEqual(i % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='failClass'>
+    <td>suite03.case0303.Case0303</td>
+    <td>00:00:00.002</td>
+    <td>4</td>
+    <td>0</td>
+    <td>4</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c8',4)">Detail</a></td>
+</tr>
+
+<tr id='ft8.1' class='none'>
+    <td class='failCase'><div class='testcase'>test_01: verify current equals to expected</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft8.1')" >
+        fail</a>
+
+    <div id='div_ft8.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft8.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft8.1: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0303.py", line 38, in test_01
+    self.assertEqual(current, expected, "current is not expected")
+AssertionError: 1 != 2 : current is not expected
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft8.2' class='none'>
+    <td class='failCase'><div class='testcase'>test_02: verify result is expected</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft8.2')" >
+        fail</a>
+
+    <div id='div_ft8.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft8.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft8.2: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0303.py", line 44, in test_02
+    self.assertTrue(result, "result is not expected")
+AssertionError: False is not true : result is not expected
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft8.3' class='none'>
+    <td class='failCase'><div class='testcase'>test_03: verify items in two lists are equal</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft8.3')" >
+        fail</a>
+
+    <div id='div_ft8.3' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft8.3').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft8.3: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0303.py", line 54, in test_03
+    self.assertCountEqual(current, expected, "current items is not expected")
+AssertionError: Element counts were not equal:
+First has 1, Second has 0:  'koodo'
+First has 0, Second has 1:  'google' : current items is not expected
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft8.4' class='none'>
+    <td class='failCase'><div class='testcase'>test_04: verify result contains expected item</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft8.4')" >
+        fail</a>
+
+    <div id='div_ft8.4' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft8.4').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft8.4: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0303.py", line 62, in test_04
+    self.assertIn(target, result, "result has no expected item")
+AssertionError: 'World' not found in 'Hello world python' : result has no expected item
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='failClass'>
+    <td>suite03.case0304.Case0304</td>
+    <td>00:00:00.116</td>
+    <td>2</td>
+    <td>0</td>
+    <td>2</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c9',2)">Detail</a></td>
+</tr>
+
+<tr id='ft9.1' class='none'>
+    <td class='failCase'><div class='testcase'>test_01</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft9.1')" >
+        fail</a>
+
+    <div id='div_ft9.1' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft9.1').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft9.1: AssertionError: total 4 error(s)
+
+1 != 2 : verify current equals to expected =&gt; failed
+
+False is not true : verify result is expected =&gt; failed
+
+Element counts were not equal:
+First has 1, Second has 0:  'koodo'
+First has 0, Second has 1:  'google' : verify items in two lists are equal =&gt; failed
+
+'World' not found in 'Hello world python' : verify result contains expected item =&gt; failed
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='ft9.2' class='none'>
+    <td class='failCase'><div class='testcase'>test_02</div></td>
+    <td>00:00:00.115</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft9.2')" >
+        fail</a>
+
+    <div id='div_ft9.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft9.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft9.2: Traceback (most recent call last):
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case0304.py", line 87, in test_02
+    assert_expectations()
+  File "D:\github\PATS\pats\delayedAssert.py", line 36, in assert_expectations
+    assert False, _report_failures()
+AssertionError: 
+
+assert_expectations() called from
+"case0304.py" line 87, in test_02()
+
+Failed Expectations:5
+
+1: file "case0304.py", line 65, in test_02()
+verify current equals to expected =&gt; failed
+        expect(current == expected, err_message)
+
+2: file "case0304.py", line 70, in test_02()
+verify result is expected =&gt; failed
+        expect(result is True, err_message)
+
+3: file "case0304.py", line 76, in test_02()
+verify items in two lists are equal =&gt; failed
+        expect(current == expected, err_message)
+
+4: file "case0304.py", line 79, in test_02()
+verify items in two lists are equal =&gt; failed
+        expect(current == expected, err_message)
+
+5: file "case0304.py", line 85, in test_02()
+verify result contains expected item =&gt; failed
+        expect(target in result, err_message)
+
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr class='failClass'>
+    <td>suite03.case305.Case0304</td>
+    <td>00:00:00.004</td>
+    <td>6</td>
+    <td>3</td>
+    <td>3</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td><a href="javascript:showClassDetail('c10',6)">Detail</a></td>
+</tr>
+
+<tr id='pt10.1' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01_1: verify if number 0 is even</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft10.2' class='none'>
+    <td class='failCase'><div class='testcase'>test_01_2: verify if number 1 is even</div></td>
+    <td>00:00:00.002</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft10.2')" >
+        fail</a>
+
+    <div id='div_ft10.2' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft10.2').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft10.2: Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\ddt.py", line 139, in wrapper
+    return func(self, *args, **kwargs)
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case305.py", line 46, in test_01
+    self.assertEqual(test_data.value % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt10.3' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01_3: verify if number 2 is even</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft10.4' class='none'>
+    <td class='failCase'><div class='testcase'>test_01_4: verify if number 3 is even</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft10.4')" >
+        fail</a>
+
+    <div id='div_ft10.4' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft10.4').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft10.4: Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\ddt.py", line 139, in wrapper
+    return func(self, *args, **kwargs)
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case305.py", line 46, in test_01
+    self.assertEqual(test_data.value % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='pt10.5' class='hiddenRow'>
+    <td class='none'><div class='testcase'>test_01_5: verify if number 4 is even</div></td>
+    <td>00:00:00.000</td>
+    <td colspan='8' align='center'>pass</td>
+</tr>
+
+<tr id='ft10.6' class='none'>
+    <td class='failCase'><div class='testcase'>test_01_6: verify if number 5 is even</div></td>
+    <td>00:00:00.001</td>
+    <td colspan='8' align='center'>
+
+    <!--css div popup start-->
+    <a class="popup_link" onfocus='this.blur();' href="javascript:showTestDetail('div_ft10.6')" >
+        fail</a>
+
+    <div id='div_ft10.6' class="popup_window">
+        <div style='text-align: right; color:red;cursor:pointer'>
+        <a onfocus='this.blur();' onclick="document.getElementById('div_ft10.6').style.display = 'none' " >
+           [x]</a>
+        </div>
+        <div class="result_detail"><pre>
+        
+ft10.6: Traceback (most recent call last):
+  File "C:\Python36\lib\site-packages\ddt.py", line 139, in wrapper
+    return func(self, *args, **kwargs)
+  File "D:\eclipse_workspace\python\pyunit test project\tests\suite03\case305.py", line 46, in test_01
+    self.assertEqual(test_data.value % 2, 0)
+AssertionError: 1 != 0
+
+
+        </pre></div>
+    </div>
+    <!--css div popup end-->
+
+    </td>
+</tr>
+
+<tr id='total_row'>
+    <td>Total</td>
+    <td>00:00:00.181</td>
+    <td>46</td>
+    <td>20</td>
+    <td>17</td>
+    <td>3</td>
+    <td>4</td>
+    <td>1</td>
+    <td>1</td>
+    <td>&nbsp;</td>
+</tr>
+</table>
+
+<div id='ending'>&nbsp;</div>
+
+</body>
+</html>
